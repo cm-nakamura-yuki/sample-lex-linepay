@@ -1,0 +1,9 @@
+{
+    "description": "",
+    "timeout": 10,
+    "environment": {
+        "CHANNEL_ACCESS_TOKEN": "",
+        "BOT_NAME": "",
+        "BOT_ALIAS": ""
+    }
+}

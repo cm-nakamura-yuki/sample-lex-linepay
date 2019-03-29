@@ -1,0 +1,11 @@
+{
+    "description": "",
+    "timeout": 10,
+    "environment": {
+        "CHANNEL_ACCESS_TOKEN": "",
+        "TABLE_NAME": "",
+        "CHANNEL_ID": "",
+        "CHANNEL_SECRET": "",
+        "ASSETS_ENDPOINT": ""
+    }
+  }

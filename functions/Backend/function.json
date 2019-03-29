@@ -1,0 +1,12 @@
+{
+    "description": "",
+    "timeout": 10,
+    "environment": {
+        "GETITEM_ENDPOINT": "",
+        "LISTITEM_ENDPOINT": "",
+        "ASSETS_ENDPOINT": "",
+        "CHECKOUT_ENDPOINT": "",
+        "CALLBACK_ENDPOINT": "",
+        "TABLE_NAME": ""
+    }
+}
