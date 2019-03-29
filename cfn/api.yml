@@ -1,0 +1,116 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: Sample Amazon Lex chatbot.
+Parameters:
+  APIName:
+    Type: String
+  WebhookFunctionArn:
+    Type: String
+  ConfirmFunctionArn:
+    Type: String
+  WebhookPath:
+    Type: String
+  ConfirmPath:
+    Type: String
+  PaymentTable:
+    Type: String
+Resources:
+  PaymentTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${PaymentTable}"
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - 
+          AttributeName: "orderId"
+          KeyType: "HASH"
+      AttributeDefinitions:
+        -
+          AttributeName: "orderId"
+          AttributeType: "S"
+  WebhookLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub "${WebhookFunctionArn}"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+  ConfirmLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Sub "${ConfirmFunctionArn}"
+      Action: "lambda:InvokeFunction"
+      Principal: "apigateway.amazonaws.com"
+  WebhookRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub "${APIName}"
+  WebhookResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: "WebhookRestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "WebhookRestApi"
+          - "RootResourceId"
+      PathPart: !Sub "${WebhookPath}"
+  ConfirmResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId:
+        Ref: "WebhookRestApi"
+      ParentId:
+        Fn::GetAtt:
+          - "WebhookRestApi"
+          - "RootResourceId"
+      PathPart: !Sub "${ConfirmPath}"
+  WebhookMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: "WebhookRestApi"
+      ResourceId:
+        Ref: "WebhookResource"
+      HttpMethod: "POST"
+      AuthorizationType: "None"
+      Integration:
+        Type: "AWS_PROXY"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WebhookFunctionArn}/invocations"
+      MethodResponses:
+        -
+          ResponseModels:
+            application/json: Empty
+          StatusCode: 200
+  ConfirmMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId:
+        Ref: "WebhookRestApi"
+      ResourceId:
+        Ref: "ConfirmResource"
+      HttpMethod: "GET"
+      AuthorizationType: "None"
+      Integration:
+        Type: "AWS_PROXY"
+        IntegrationHttpMethod: "POST"
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ConfirmFunctionArn}/invocations"
+      MethodResponses:
+        -
+          ResponseModels:
+            application/json: Empty
+          StatusCode: 200
+  WebhookDeployment:
+    DependsOn: "ConfirmMethod"
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId:
+        Ref: "WebhookRestApi"
+  WebhookStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: prd
+      RestApiId:
+        Ref: "WebhookRestApi"
+      DeploymentId:
+        Ref: "WebhookDeployment"
