@@ -1,0 +1,25 @@
+{
+  "name": "sample-line-chatbot-lex",
+  "version": "1.0.0",
+  "description": "Sample order chatbot w/ Amazon Lex.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cm-nakamura-yuki/sample-line-chatbot-lex.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cm-nakamura-yuki/sample-line-chatbot-lex/issues"
+  },
+  "homepage": "https://github.com/cm-nakamura-yuki/sample-line-chatbot-lex#readme",
+  "dependencies": {
+    "@types/node": "^11.11.7",
+    "@types/request-promise": "^4.1.42",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4"
+  }
+}
